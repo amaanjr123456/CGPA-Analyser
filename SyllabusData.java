@@ -58,6 +58,7 @@ public class SyllabusData {
                 new Subject("Health & Wellness / Professional Ethics", 1, "Mandatory")
         };
 
+        // initialize all branches sem1 and sem2 with common arrays
         for (int b = 0; b < NUM_BRANCHES; b++) {
             syllabus[b][0] = sem1Common;
             syllabus[b][1] = sem2Common;
@@ -304,84 +305,72 @@ public class SyllabusData {
 
         // -------------------- CE (branch 4) Sem 3 - 8 --------------------
         syllabus[4][2] = new Subject[] {
-                new Subject("Surveying & Geomatics", 4, "Theory"),
                 new Subject("Strength of Materials", 4, "Theory"),
-                new Subject("Engineering Mechanics for CE", 3, "Theory"),
-                new Subject("Fluid Mechanics", 3, "Theory"),
+                new Subject("Surveying & Geomatics", 4, "Theory"),
+                new Subject("Structural Analysis I", 4, "Theory"),
+                new Subject("Building Materials & Construction", 3, "Theory"),
                 new Subject("Surveying Lab", 1, "Lab"),
-                new Subject("Fluid Mechanics Lab", 1, "Lab"),
+                new Subject("Material Testing Lab", 1, "Lab"),
                 new Subject("Economics for Engineers", 2, "Mandatory")
         };
 
         syllabus[4][3] = new Subject[] {
-                new Subject("Concrete Technology", 4, "Theory"),
-                new Subject("Structural Analysis I", 4, "Theory"),
-                new Subject("Geotechnical Engineering I", 3, "Theory"),
-                new Subject("Transportation Engineering I", 3, "Theory"),
-                new Subject("Concrete & Materials Lab", 1, "Lab"),
-                new Subject("Surveying Field Work", 1, "Lab"),
+                new Subject("Fluid Mechanics", 4, "Theory"),
+                new Subject("Concrete Technology", 3, "Theory"),
+                new Subject("Structural Analysis II", 4, "Theory"),
+                new Subject("Geotechnical Engineering I", 4, "Theory"),
+                new Subject("Concrete Lab", 1, "Lab"),
+                new Subject("Fluid Mechanics Lab", 1, "Lab"),
                 new Subject("Constitution & Professional Ethics", 0, "Mandatory")
         };
 
         syllabus[4][4] = new Subject[] {
-                new Subject("Structural Analysis II", 4, "Theory"),
+                new Subject("Transportation Engineering I", 4, "Theory"),
+                new Subject("Environmental Engineering I", 3, "Theory"),
                 new Subject("Geotechnical Engineering II", 3, "Theory"),
-                new Subject("Water Resources Engineering", 3, "Theory"),
-                new Subject("Environmental Engineering", 3, "Theory"),
-                new Subject("Soil Mechanics Lab", 1, "Lab"),
-                new Subject("Environmental Lab", 1, "Lab"),
+                new Subject("Open Elective I (OE)", 3, "Elective"),
+                new Subject("Transportation Engineering Lab", 1, "Lab"),
+                new Subject("Environmental Engineering Lab", 1, "Lab"),
                 new Subject("Sustainable Development", 2, "Mandatory")
         };
 
         syllabus[4][5] = new Subject[] {
-                new Subject("Design of Steel Structures", 3, "Theory"),
-                new Subject("Hydrology & Irrigation", 3, "Theory"),
-                new Subject("Transportation Engineering II", 3, "Theory"),
+                new Subject("Structural Design I", 4, "Theory"),
+                new Subject("Water Resources Engineering", 3, "Theory"),
                 new Subject("Elective I (PE)", 3, "Elective"),
-                new Subject("Civil Lab II", 1, "Lab"),
+                new Subject("Structural Design Lab", 1, "Lab"),
                 new Subject("Mini Project", 2, "Project"),
                 new Subject("Disaster Management", 0, "Mandatory")
         };
 
         syllabus[4][6] = new Subject[] {
-                new Subject("Advanced Structural Design", 3, "Theory"),
-                new Subject("Construction Management & Planning", 3, "Theory"),
+                new Subject("Transportation Engineering II", 3, "Theory"),
+                new Subject("Environmental Engineering II", 3, "Theory"),
                 new Subject("Elective II (PE)", 3, "Elective"),
-                new Subject("Elective III (PE)", 3, "Elective"),
                 new Subject("Project Phase I", 2, "Project"),
                 new Subject("Seminar", 2, "Mandatory")
         };
 
         syllabus[4][7] = new Subject[] {
-                new Subject("Earthquake Resistant Design", 3, "Theory"),
-                new Subject("Elective IV (PE)", 3, "Elective"),
-                new Subject("Elective V (PE)", 3, "Elective"),
+                new Subject("Advanced Structural Design", 3, "Theory"),
+                new Subject("Elective III (PE)", 3, "Elective"),
                 new Subject("Major Project Phase II", 8, "Project"),
                 new Subject("Comprehensive Viva", 2, "Viva")
         };
     }
-    public static String getBranchName(int branchIndex) {
-        if (branchIndex >= 0 && branchIndex < BRANCH_NAMES.length)
-            return BRANCH_NAMES[branchIndex];
-        else
-            return "Unknown Branch";
+
+    // Helper to get subjects by branch and semester
+    public static Subject[] getSubjects(int branchIndex, int semesterIndex) {
+        if (branchIndex < 0 || branchIndex >= NUM_BRANCHES
+                || semesterIndex < 0 || semesterIndex >= NUM_SEMS) {
+            return new Subject[0];
+        }
+        Subject[] subjects = syllabus[branchIndex][semesterIndex];
+        return subjects != null ? subjects : new Subject[0];
     }
 
-    // Helper: Get subjects for a given branch and semester (0-based indices)
-    public static Subject[] getSubjects(int branchIndex, int semIndex) {
-        if (branchIndex >= 0 && branchIndex < NUM_BRANCHES &&
-            semIndex >= 0 && semIndex < NUM_SEMS) {
-            return syllabus[branchIndex][semIndex];
-        }
-        return new Subject[0]; // empty if invalid
+    // Helper to get all branch names
+    public static String[] getAllBranches() {
+        return BRANCH_NAMES.clone();
     }
-
-    // Helper: Calculate total credits for branch & semester
-    public static int getTotalCredits(int branchIndex, int semIndex) {
-        Subject[] subjects = getSubjects(branchIndex, semIndex);
-        int total = 0;
-        for (Subject s : subjects) {
-            total += s.credits;
-        }
-        return total;
 }
