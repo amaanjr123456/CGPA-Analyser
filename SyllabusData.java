@@ -360,4 +360,28 @@ public class SyllabusData {
                 new Subject("Comprehensive Viva", 2, "Viva")
         };
     }
+    public static String getBranchName(int branchIndex) {
+        if (branchIndex >= 0 && branchIndex < BRANCH_NAMES.length)
+            return BRANCH_NAMES[branchIndex];
+        else
+            return "Unknown Branch";
+    }
+
+    // Helper: Get subjects for a given branch and semester (0-based indices)
+    public static Subject[] getSubjects(int branchIndex, int semIndex) {
+        if (branchIndex >= 0 && branchIndex < NUM_BRANCHES &&
+            semIndex >= 0 && semIndex < NUM_SEMS) {
+            return syllabus[branchIndex][semIndex];
+        }
+        return new Subject[0]; // empty if invalid
+    }
+
+    // Helper: Calculate total credits for branch & semester
+    public static int getTotalCredits(int branchIndex, int semIndex) {
+        Subject[] subjects = getSubjects(branchIndex, semIndex);
+        int total = 0;
+        for (Subject s : subjects) {
+            total += s.credits;
+        }
+        return total;
 }
