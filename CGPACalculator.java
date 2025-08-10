@@ -2,105 +2,68 @@ import java.util.Scanner;
 
 public class CGPACalculator {
 
-    private static final Scanner sc = new Scanner(System.in);
-
     public static void main(String[] args) {
-        System.out.println("=== KTU 2024 CGPA Calculator ===\n");
+        Scanner sc = new Scanner(System.in);
 
-        int branchIndex = selectBranch();
-        if (branchIndex == -1) {
-            System.out.println("Invalid branch selected. Exiting.");
-            return;
+        System.out.println("KTU 2024 CGPA Calculator");
+        System.out.println("=========================");
+
+        // Show branches
+        String[] branches = SyllabusData.getAllBranches();
+        for (int i = 0; i < branches.length; i++) {
+            System.out.printf("%d. %s\n", i + 1, branches[i]);
         }
 
+        System.out.print("Enter your branch number: ");
+        int branch = sc.nextInt() - 1;
+
+        System.out.print("Enter number of semesters completed (1-8): ");
+        int numSems = sc.nextInt();
+
+        double totalWeightedGradePoints = 0;
         int totalCredits = 0;
-        double totalWeightedPoints = 0;
 
-        // Loop over all semesters
-        for (int sem = 0; sem < SyllabusData.NUM_SEMS; sem++) {
-            SyllabusData.Subject[] subjects = SyllabusData.getSubjects(branchIndex, sem);
+        for (int sem = 0; sem < numSems; sem++) {
+            SyllabusData.Subject[] subjects = SyllabusData.getSubjects(branch, sem);
+            if (subjects.length == 0) {
+                System.out.printf("No subjects found for semester %d\n", sem + 1);
+                continue;
+            }
+            System.out.printf("\nEnter marks for Semester %d:\n", sem + 1);
 
-            if (subjects == null || subjects.length == 0) continue;
-
-            System.out.println("\nSemester " + (sem + 1) + ":");
-
-            int semesterCredits = 0;
-            double semesterWeightedPoints = 0;
+            int semCredits = 0;
+            double semWeightedPoints = 0;
 
             for (SyllabusData.Subject subject : subjects) {
-                // Ignore subjects with 0 credits (like some mandatory seminars)
-                if (subject.credits == 0) continue;
+                if (subject.credits == 0) continue; // skip zero-credit subjects like ethics
 
-                double marks = inputMarks(subject);
+                System.out.printf("  %s (%d credits): ", subject.name, subject.credits);
+                int marks = sc.nextInt();
 
                 int gradePoint = GradeUtils.marksToGradePoint(marks);
-                String grade = GradeUtils.marksToGrade(marks);
-
-                System.out.printf("%-40s | Marks: %5.2f | Grade: %-2s | GP: %d\n",
-                                  subject.name, marks, grade, gradePoint);
-
-                semesterWeightedPoints += gradePoint * subject.credits;
-                semesterCredits += subject.credits;
+                semCredits += subject.credits;
+                semWeightedPoints += gradePoint * subject.credits;
             }
 
-            if (semesterCredits == 0) {
-                System.out.println("No credit subjects this semester.");
+            if (semCredits == 0) {
+                System.out.println("No credits this semester, skipping.");
                 continue;
             }
 
-            double semesterGPA = semesterWeightedPoints / semesterCredits;
-            System.out.printf("Semester %d GPA: %.2f\n", sem + 1, semesterGPA);
+            double sgpa = semWeightedPoints / semCredits;
+            System.out.printf("Semester %d SGPA: %.2f\n", sem + 1, sgpa);
 
-            totalCredits += semesterCredits;
-            totalWeightedPoints += semesterWeightedPoints;
+            totalWeightedGradePoints += semWeightedPoints;
+            totalCredits += semCredits;
         }
 
         if (totalCredits == 0) {
-            System.out.println("No credit subjects found in the syllabus.");
+            System.out.println("No credits found. CGPA cannot be calculated.");
         } else {
-            double cgpa = totalWeightedPoints / totalCredits;
-            System.out.printf("\nOverall CGPA (KTU 2024 scheme): %.2f\n", cgpa);
+            double cgpa = totalWeightedGradePoints / totalCredits;
+            System.out.printf("\nOverall CGPA after %d semester(s): %.2f\n", numSems, cgpa);
         }
 
-        System.out.println("=== Calculation complete. Thank you! ===");
         sc.close();
-    }
-
-    private static int selectBranch() {
-        String[] branches = SyllabusData.getAllBranches();
-        System.out.println("Select your branch:");
-        for (int i = 0; i < branches.length; i++) {
-            System.out.printf("  %d - %s\n", i, branches[i]);
-        }
-        System.out.print("Enter branch index: ");
-
-        if (sc.hasNextInt()) {
-            int branch = sc.nextInt();
-            sc.nextLine(); // consume newline
-            if (branch >= 0 && branch < branches.length) {
-                return branch;
-            }
-        }
-        sc.nextLine(); // discard invalid input
-        return -1; // invalid selection
-    }
-
-    private static double inputMarks(SyllabusData.Subject subject) {
-        double marks = -1;
-        do {
-            System.out.printf("Enter marks for %s (%d credits): ", subject.name, subject.credits);
-            if (sc.hasNextDouble()) {
-                marks = sc.nextDouble();
-                sc.nextLine();
-                if (marks < 0 || marks > 100) {
-                    System.out.println("Invalid marks. Must be between 0 and 100.");
-                    marks = -1;
-                }
-            } else {
-                System.out.println("Invalid input. Please enter a number.");
-                sc.nextLine();
-            }
-        } while (marks < 0);
-        return marks;
     }
 }
