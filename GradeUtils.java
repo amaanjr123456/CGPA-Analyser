@@ -1,57 +1,52 @@
 public class GradeUtils {
 
     /**
-     * Converts marks (0-100) to grade points as per KTU 2024 scheme.
-     * @param marks Marks scored in the subject
-     * @return Grade point (0-10)
+     * Convert marks (0-100) to grade point (0-10 scale)
+     * KTU 2024 scheme example:
+     * 90-100 -> 10
+     * 80-89  -> 9
+     * 70-79  -> 8
+     * 60-69  -> 7
+     * 50-59  -> 6
+     * 45-49  -> 5
+     * 40-44  -> 4 (minimum pass)
+     * <40    -> 0 (fail)
      */
-    public static int marksToGradePoint(double marks) {
-        if (marks >= 90) {
-            return 10; // S (previously O)
-        } else if (marks >= 80) {
-            return 9; // A+
-        } else if (marks >= 70) {
-            return 8; // A
-        } else if (marks >= 60) {
-            return 7; // B+
-        } else if (marks >= 50) {
-            return 6; // B
-        } else if (marks >= 40) {
-            return 5; // C
-        } else {
-            return 0; // F (Fail)
-        }
+    public static int marksToGradePoint(int marks) {
+        if (marks >= 90) return 10;
+        if (marks >= 80) return 9;
+        if (marks >= 70) return 8;
+        if (marks >= 60) return 7;
+        if (marks >= 50) return 6;
+        if (marks >= 45) return 5;
+        if (marks >= 40) return 4;
+        return 0;
     }
 
     /**
-     * Converts marks to letter grade as per KTU 2024 scheme.
-     * @param marks Marks scored in the subject
-     * @return Letter grade as String (S, A+, A, B+, B, C, F)
+     * Convert letter grade to grade point (if using grades like A+, A, B, etc.)
+     * Example mapping:
+     * A+ -> 10, A -> 9, B+ -> 8, B ->7, C ->6, D ->5, F ->0
      */
-    public static String marksToGrade(double marks) {
-        if (marks >= 90) {
-            return "S";  // Changed from "O" to "S"
-        } else if (marks >= 80) {
-            return "A+";
-        } else if (marks >= 70) {
-            return "A";
-        } else if (marks >= 60) {
-            return "B+";
-        } else if (marks >= 50) {
-            return "B";
-        } else if (marks >= 40) {
-            return "C";
-        } else {
-            return "F";
+    public static int letterGradeToGradePoint(String grade) {
+        switch (grade.toUpperCase()) {
+            case "A+":
+                return 10;
+            case "A":
+                return 9;
+            case "B+":
+                return 8;
+            case "B":
+                return 7;
+            case "C":
+                return 6;
+            case "D":
+                return 5;
+            case "F":
+            case "E":
+                return 0;
+            default:
+                return 0; // Invalid or fail
         }
-    }
-    
-    /**
-     * Check if grade point corresponds to pass or fail.
-     * @param gradePoint Grade point to check
-     * @return true if pass, false if fail
-     */
-    public static boolean isPass(int gradePoint) {
-        return gradePoint > 0;
     }
 }
