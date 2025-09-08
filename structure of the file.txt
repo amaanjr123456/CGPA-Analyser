@@ -1,4 +1,0 @@
-📁 CGPACalculator/
- ├── SyllabusData.java   ← KTU syllabus data for all branches & semesters
- ├── CGPACalculator.java ← Main logic (input, GPA calc, CGPA calc)
- └── GradeUtils.java     ← Helper for grade point conversion
